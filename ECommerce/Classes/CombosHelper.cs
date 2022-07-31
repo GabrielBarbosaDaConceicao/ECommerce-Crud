@@ -21,6 +21,20 @@ namespace ECommerce.Classes
             return dep = dep.OrderBy(d => d.Name).ToList();
         }
 
+        public static List<City> GetCities()
+        {
+
+            var dep = db.Cities.ToList();
+            dep.Add(new City
+            {
+                DepartamentsId = 0,
+                Name = "[ Selecione uma Cidade ]"
+            });
+
+            return dep = dep.OrderBy(d => d.Name).ToList();
+
+        }
+
         public void Dispose()
         {
             db.Dispose();
