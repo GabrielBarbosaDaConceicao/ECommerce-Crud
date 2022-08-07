@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<ECommerce.Models.User>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Usuários";
 }
 
-<h2>Index</h2>
+<h2>Usuários do Sistema</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Criar novo Usuário", "Create", new { }, new { @class = "btn btn-primary" })
 </p>
 <table class="table">
     <tr>
@@ -68,12 +68,15 @@
             @Html.DisplayFor(modelItem => item.Address)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Photo)
+            @if (!string.IsNullOrEmpty(item.Photo))
+            {
+                <img src="@Url.Content(item.Photo)" alt="Image" style="width:60px;height:100px;max-width: 100%; height: auto;" />
+            }
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.UserId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.UserId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.UserId })
+            @Html.ActionLink("Editar", "Edit", new { id=item.UserId }) |
+            @Html.ActionLink("Detalhes", "Details", new { id=item.UserId }) |
+            @Html.ActionLink("Excluir", "Delete", new { id=item.UserId })
         </td>
     </tr>
 }

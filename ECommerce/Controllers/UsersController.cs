@@ -4,6 +4,7 @@ using System.Net;
 using System.Web.Mvc;
 using ECommerce.Classes;
 using ECommerce.Models;
+using static ECommerce.Classes.UserHelper;
 
 namespace ECommerce.Controllers
 {
@@ -61,6 +62,25 @@ namespace ECommerce.Controllers
             {
                 db.Users.Add(user);
                 db.SaveChanges();
+                UsersHelper.CreateUserASP(user.UserName, "User");
+
+                if (user.PhotoFile != null)
+                {
+
+                    var pic = string.Empty;
+                    var folder = "~/Content/Users";
+                    var file = string.Format("{0}.jpg", user.UserId);
+
+                    var response = FilesHelper.UploadPhoto(user.PhotoFile, folder, file);
+                    if (response)
+                    {
+                        pic = string.Format("{0}/{1}", folder, file);
+                        user.Photo = pic;
+                        db.Entry(user).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+
+                }
                 return RedirectToAction("Index");
             }
 
@@ -97,8 +117,31 @@ namespace ECommerce.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (user.PhotoFile != null)
+                {
+                    var pic = string.Empty;
+                    var folder = "~/Content/Users";
+                    var file = string.Format("{0}.jpg", user.UserId);
+
+                    var response = FilesHelper.UploadPhoto(user.PhotoFile, folder, file);
+                    if (response)
+                    {
+                        pic = string.Format("{0}/{1}", folder, file);
+                        user.Photo = pic;
+                    }
+
+                }
+
+                var db2 = new EcommerceContext();
+                var currentUser = db2.Users.Find(user.UserId);
+                if (currentUser.UserName != user.UserName)
+                {
+                    UsersHelper.UpdateUserName(currentUser.UserName, user.UserName);
+                }
+                db2.Dispose();
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
             ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", user.CityId);
@@ -130,6 +173,7 @@ namespace ECommerce.Controllers
             User user = db.Users.Find(id);
             db.Users.Remove(user);
             db.SaveChanges();
+            UsersHelper.DeleteUser(user.UserName);
             return RedirectToAction("Index");
         }
 
